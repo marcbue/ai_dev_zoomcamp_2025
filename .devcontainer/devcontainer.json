@@ -14,7 +14,9 @@
     // Persist bash history
     "source=devcontainer-bashhistory,target=/commandhistory,type=volume",
     // Persist uv cache for faster rebuilds
-    "source=devcontainer-uv-cache,target=/root/.cache/uv,type=volume"
+    "source=devcontainer-uv-cache,target=/root/.cache/uv,type=volume",
+    // Mount SSH keys from host (read-only) - needed for IdentityFile selection
+    "source=${localEnv:HOME}/.ssh,target=/tmp/host-ssh,type=bind,readonly"
   ],
 
   // Environment variables

@@ -7,14 +7,63 @@ echo "=== Setting up development environment ==="
 echo "Installing required packages..."
 apt-get update -qq && apt-get install -y -qq curl openssh-client > /dev/null
 
-# Setup SSH for git operations (agent is forwarded automatically by Cursor/VSCode)
+# Setup SSH for git operations
 echo "Setting up SSH..."
 mkdir -p ~/.ssh
 chmod 700 ~/.ssh
 
+# Copy SSH keys from host mount (mounted read-only at /tmp/host-ssh)
+# Keys are copied to ~/.ssh with proper permissions for SSH to use them
+if [ -d "/tmp/host-ssh" ]; then
+    echo "Copying SSH keys from host..."
+    # Copy private keys
+    for keyfile in id_ed25519 id_ed25519_personal id_rsa; do
+        if [ -f "/tmp/host-ssh/$keyfile" ]; then
+            cp "/tmp/host-ssh/$keyfile" ~/.ssh/
+            chmod 600 ~/.ssh/$keyfile
+        fi
+    done
+    # Copy public keys
+    for pubfile in id_ed25519.pub id_ed25519_personal.pub id_rsa.pub; do
+        if [ -f "/tmp/host-ssh/$pubfile" ]; then
+            cp "/tmp/host-ssh/$pubfile" ~/.ssh/
+            chmod 644 ~/.ssh/$pubfile
+        fi
+    done
+    echo "SSH keys copied from host"
+else
+    echo "Warning: No SSH keys mounted at /tmp/host-ssh"
+fi
+
 # Add GitHub to known hosts to avoid host key verification prompts
 ssh-keyscan -t ed25519,rsa github.com >> ~/.ssh/known_hosts 2>/dev/null || true
-echo "SSH configured - agent forwarding from host is automatic"
+
+# Create SSH config for multiple GitHub accounts
+# Uses IdentityFile to select the correct key for each account
+cat > ~/.ssh/config << 'SSHCONFIG'
+# Personal GitHub account (use with: git@github.com-personal:user/repo.git)
+Host github.com-personal
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_personal
+    IdentitiesOnly yes
+
+# Work GitHub account (default: git@github.com:user/repo.git)
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+SSHCONFIG
+chmod 600 ~/.ssh/config
+
+echo "SSH configured with keys from host"
+echo "  Use 'github.com-personal' for personal repos"
+echo "  Use 'github.com' for work repos"
+
+# Git configuration
+echo "Configuring git..."
+git config --global push.autoSetupRemote true
 
 # Install uv
 echo "Installing uv..."
