@@ -1,7 +1,7 @@
 [project]
-name = "week1-overview"
+name = "ai-dev-zoomcamp"
 version = "0.1.0"
-description = "Add your description here"
+description = "AI Development Zoomcamp - Course Materials"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
@@ -13,3 +13,4 @@ dev = [
     "pytest>=9.0.1",
     "ruff>=0.14.7",
 ]
+

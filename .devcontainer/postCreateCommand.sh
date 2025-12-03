@@ -62,6 +62,11 @@ alias gs='git status'
 alias gc='git commit'
 alias gp='git push'
 alias gl='git log --oneline -10'
+
+# Django helpers for week1
+alias week1='cd week1_overview'
+alias runserver='cd week1_overview && uv run python manage.py runserver'
+alias migrate='cd week1_overview && uv run python manage.py migrate'
 EOF
 
 echo "=== Setup complete! ==="
@@ -72,4 +77,7 @@ echo "  uv run <command>     - Run command in venv"
 echo "  uv sync              - Sync dependencies from lock file"
 echo ""
 echo "Aliases: uvr, uva, uvad, uvs, uvl, gs, gc, gp, gl"
-
+echo "Django: week1, runserver, migrate"
+echo ""
+echo "To run the Week 1 Django app:"
+echo "  cd week1_overview && uv run python manage.py runserver"

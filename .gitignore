@@ -8,3 +8,18 @@ wheels/
 
 # Virtual environments
 .venv
+
+# uv
+uv.lock
+
+# SQLite databases
+*.sqlite3
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
