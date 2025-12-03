@@ -3,11 +3,18 @@ set -e
 
 echo "=== Setting up development environment ==="
 
-# Install curl if not available
-if ! command -v curl &> /dev/null; then
-    echo "Installing curl..."
-    apt-get update -qq && apt-get install -y -qq curl > /dev/null
-fi
+# Install curl and openssh-client if not available
+echo "Installing required packages..."
+apt-get update -qq && apt-get install -y -qq curl openssh-client > /dev/null
+
+# Setup SSH for git operations (agent is forwarded automatically by Cursor/VSCode)
+echo "Setting up SSH..."
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+
+# Add GitHub to known hosts to avoid host key verification prompts
+ssh-keyscan -t ed25519,rsa github.com >> ~/.ssh/known_hosts 2>/dev/null || true
+echo "SSH configured - agent forwarding from host is automatic"
 
 # Install uv
 echo "Installing uv..."

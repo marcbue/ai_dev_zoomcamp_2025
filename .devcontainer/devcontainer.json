@@ -9,7 +9,7 @@
     }
   },
 
-  // Forward SSH agent and GPG from host
+  // Volumes for persistence
   "mounts": [
     // Persist bash history
     "source=devcontainer-bashhistory,target=/commandhistory,type=volume",
