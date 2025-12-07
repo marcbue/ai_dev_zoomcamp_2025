@@ -5,7 +5,17 @@ echo "=== Setting up development environment ==="
 
 # Install curl and openssh-client if not available
 echo "Installing required packages..."
-apt-get update -qq && apt-get install -y -qq curl openssh-client > /dev/null
+apt-get update -qq && apt-get install -y -qq curl openssh-client ca-certificates gnupg > /dev/null
+
+# Install Node.js and npm
+echo "Installing Node.js and npm..."
+# Install Node.js 20.x LTS (includes npm)
+curl -fsSL https://deb.nodesource.com/setup_20.x | bash - > /dev/null
+apt-get install -y -qq nodejs > /dev/null
+
+# Verify npm installation
+npm --version
+node --version
 
 # Setup SSH for git operations
 echo "Setting up SSH..."
@@ -64,7 +74,7 @@ echo "  Use 'github.com' for work repos"
 # Git configuration
 echo "Configuring git..."
 git config --global push.autoSetupRemote true
-
+git config --global --add safe.directory /workspaces/ai_dev_zoomcamp
 # Install uv
 echo "Installing uv..."
 curl -LsSf https://astral.sh/uv/install.sh | sh
