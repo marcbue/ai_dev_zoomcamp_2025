@@ -170,9 +170,33 @@ export const leaderboardApi = {
     
     localStorage.setItem(STORAGE_KEYS.LEADERBOARD, JSON.stringify(leaderboard));
     
-    const rank = leaderboard.findIndex(e => e.id === newEntry.id) + 1;
+    // Filter by mode and get top 10 to determine if score qualifies for ranking
+    const modeLeaderboard = leaderboard
+      .filter(entry => entry.mode === result.mode)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 10);
     
-    return { success: true, rank: rank <= 10 ? rank : null };
+    const rank = modeLeaderboard.findIndex(e => e.id === newEntry.id) + 1;
+    
+    // Only return a rank if the score is in the top 10 AND beats at least one existing entry
+    // If score is lower than all existing entries in top 10, return null
+    if (rank > 0) {
+      // Check if there are existing entries with higher scores
+      const existingEntries = modeLeaderboard.filter(e => e.id !== newEntry.id);
+      
+      // If no existing entries, this is the first entry and should get rank 1
+      if (existingEntries.length === 0) {
+        return { success: true, rank: 1 };
+      }
+      
+      // Only return rank if the score beats at least one existing entry
+      const lowestExistingScore = Math.min(...existingEntries.map(e => e.score));
+      const beatsAnyEntry = result.score > lowestExistingScore;
+      
+      return { success: true, rank: beatsAnyEntry ? rank : null };
+    }
+    
+    return { success: true, rank: null };
   },
 };
 
