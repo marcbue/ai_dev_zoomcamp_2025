@@ -1,5 +1,5 @@
 # Week 1: Django Todo List Application
-
+s
 A simple todo list application built with Django.
 
 ## Running the Application
